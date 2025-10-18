@@ -1,0 +1,9 @@
+# Dependências
+/node_modules
+
+# arquivos gerados pelo Vite
+/dist
+
+# Logs
+npm-debug.log*
+
