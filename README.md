@@ -1,4 +1,4 @@
-> **Status:** Concluído ✅
+> **Status:** Development ⚙️
 
 # 🛒 E-commerce | Fic
 
