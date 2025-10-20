@@ -11,6 +11,12 @@ function App() {
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  // Att selectedItems quando o carrinho muda 
+  useEffect(() => {
+    setSelectedItems(prevSelected => prevSelected.filter(id => cart.some(item => item.id === id)));
+  }, [cart]);
 
   // att lS quando o carrinho mudar
   useEffect(() => {
@@ -35,6 +41,7 @@ function App() {
 
   const removeFromCart = (productId) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+    setSelectedItems((prevSelected) => prevSelected.filter((id) => id !== productId));
   };
   
   const increaseQuantity = (productId) => {
@@ -55,6 +62,29 @@ function App() {
     });
   };
 
+  // função para alternar a seleção de um produto
+  const toggleProductSelection = (productId) => {
+    setSelectedItems((prevSelected) =>
+      prevSelected.includes(productId)
+        ? prevSelected.filter((id) => id !== productId)
+        : [...prevSelected, productId]
+    );
+  };
+
+  // função para selecionar/desmarcar todos os produtos
+  const toggleSelectAll = (selectAll) => {
+    if (selectAll) {
+      setSelectedItems(cart.map(item => item.id));
+    } else {
+      setSelectedItems([]);
+    }
+  };
+
+  const removeSelectedItems = () => {
+    setCart((prevCart) => prevCart.filter((item) => !selectedItems.includes(item.id)));
+    setSelectedItems([]); // limpa a seleção quando remove selecionados
+  };
+
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
@@ -66,6 +96,10 @@ function App() {
           increaseQuantity={increaseQuantity}
           decreaseQuantity={decreaseQuantity}
           closeCart={() => setIsCartOpen(false)}
+          selectedItems={selectedItems} 
+          toggleProductSelection={toggleProductSelection}
+          toggleSelectAll={toggleSelectAll} 
+          removeSelectedItems={removeSelectedItems} 
         />
       )}
       <Routes>

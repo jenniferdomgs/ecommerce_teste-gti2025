@@ -2,8 +2,17 @@ import React from 'react';
 import './Cart.css';
 import '/App.css';
 
-function Cart({ cart, removeFromCart, increaseQuantity, decreaseQuantity, closeCart }) {
-  const totalGeral = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+function Cart({ cart, removeFromCart, increaseQuantity, decreaseQuantity, closeCart, selectedItems, toggleProductSelection, toggleSelectAll, removeSelectedItems }) {
+  // Calcula o total dos itens selecionados
+  const totalSelectedItemsPrice = cart.reduce((total, item) => {
+    if (selectedItems.includes(item.id)) {
+      return total + item.price * item.quantity;
+    }
+    return total;
+  }, 0);
+
+  const allItemsSelected = cart.length > 0 && selectedItems.length === cart.length;
+  const hasSelectedItems = selectedItems.length > 0;
 
   return (
     <div className="modal" onClick={closeCart}>
@@ -16,9 +25,31 @@ function Cart({ cart, removeFromCart, increaseQuantity, decreaseQuantity, closeC
           <p>Seu carrinho de compras está vazio</p>
         ) : (
           <>
+            <div className="cart-actions">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={allItemsSelected}
+                  onChange={(e) => toggleSelectAll(e.target.checked)}
+                />
+                Selecionar tudo
+              </label>
+              {hasSelectedItems && (
+                <button onClick={removeSelectedItems} className="remove-selected-btn">
+                  Remover selecionados ({selectedItems.length})
+                </button>
+              )}
+            </div>
+
             <ul className="cart-items-list">
               {cart.map((item) => (
                 <li key={item.id} className="cart-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.includes(item.id)}
+                    onChange={() => toggleProductSelection(item.id)}
+                    className="cart-item-checkbox"
+                  />
                   <div className="cart-item-info">
                     <div style={{ fontWeight: 'bold' }}>{item.name}</div>
                     <div>Preço Unit.: R$ {item.price.toFixed(2)}</div>
@@ -36,10 +67,9 @@ function Cart({ cart, removeFromCart, increaseQuantity, decreaseQuantity, closeC
               ))}
             </ul>
             <div>
-              <h3>Resumo</h3>
               <div className="cart-summary">
                 <span>Total:</span>
-                <span>R$ {totalGeral.toFixed(2)}</span>
+                <span>R$ {totalSelectedItemsPrice.toFixed(2)}</span>
               </div>
             </div>
           </>
