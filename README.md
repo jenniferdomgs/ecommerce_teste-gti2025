@@ -1,5 +1,3 @@
-> **Status:** Development ⚙️
-
 # 🛒 E-commerce | Fic
 
 Trata-se de um eCommerce fictício desenvolvido como desafio técnico de frontend.
